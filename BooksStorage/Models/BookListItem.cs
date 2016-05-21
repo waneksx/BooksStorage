@@ -9,5 +9,6 @@ namespace BooksStorage.Models
     {
         public Book Book { get; set; }
         public Author Author { get; set; }
+        public int? Id { get; set; }
     }
 }

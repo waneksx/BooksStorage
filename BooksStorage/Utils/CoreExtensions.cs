@@ -16,7 +16,7 @@ namespace BooksStorage.Utils
             bool authentic = true;            
             foreach (var item in books.Authors)
             {
-                if (author == item)
+                if (author.FirstName == item.FirstName && author.LastName == item.LastName)
                 {
                     author = item;
                     authentic = false;

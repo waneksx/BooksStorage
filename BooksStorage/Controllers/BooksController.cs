@@ -19,14 +19,16 @@ namespace BooksStorage.Controllers
         // GET: Books
         public ActionResult Index()
         {
+            
             var list = dbContext.Books
                 .Select(x => new BookListItem
                 {
-                    
+                    Id = x.Id,
                     Book = x,
                     Author = x.Author,
                     
                 }).ToList();
+           
 
             return View(list);
             
@@ -63,18 +65,35 @@ namespace BooksStorage.Controllers
         // GET: Books/Edit/5
         public ActionResult Edit(int id)
         {
-            
-            return View();
+            var bookListItem = dbContext.Books
+               .Select(x => new BookListItem
+               {
+                   Id = x.Id,
+                   Book = x,
+                   Author = x.Author,
+
+               }).First(x=>x.Id == id);
+            return View(bookListItem);
             
         }
 
         // POST: Books/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, Book book)
+        public ActionResult Edit(int id, BookListItem bli)
         {
             try
             {
-                
+                BookListItem b = dbContext.Books.Select(x => new BookListItem
+                {
+                    Id = x.Id,
+                    Book = x,
+                    Author = x.Author,
+
+                }).First(x => x.Id == id);
+                b.Book.Title = bli.Book.Title;
+                b.Author.FirstName = bli.Author.FirstName;
+                b.Author.LastName = bli.Author.LastName;
+                dbContext.SaveChanges();
                 return RedirectToAction("Index");
             }
             catch
@@ -95,7 +114,10 @@ namespace BooksStorage.Controllers
         {
             try
             {
-               
+                dbContext.Books.Remove(dbContext.Books.First(x => x.Id == id));
+                dbContext.SaveChanges();
+
+
                 return RedirectToAction("Index");
             }
             catch
