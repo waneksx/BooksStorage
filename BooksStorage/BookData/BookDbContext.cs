@@ -4,7 +4,7 @@ namespace BooksStorage.BookData
     using System.Data.Entity;
     using System.Linq;
     using BooksStorage.Models;
-
+    using Migrations;
     public class BookDbContext : DbContext
     {
         // Your context has been configured to use a 'BookDbContext' connection string from your application's 
@@ -16,7 +16,7 @@ namespace BooksStorage.BookData
         public BookDbContext()
             : base("name=BookDbContext")
         {
-            Database.SetInitializer(new DropCreateDatabaseIfModelChanges<BookDbContext>());
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<BookDbContext, Configuration>());
         }
 
         // Add a DbSet for each entity type that you want to include in your model. For more information 
@@ -24,6 +24,8 @@ namespace BooksStorage.BookData
 
         public virtual DbSet<Book> Books { get; set; }
         public virtual DbSet<Author> Authors { get; set; }
+        
+
 
 
     }

@@ -11,25 +11,22 @@ namespace BooksStorage.Controllers
 {
     public class BooksController : Controller
     {
-        BookDbContext dbContext = new BookDbContext();
-
-
+        BookDbContext dbContext = new BookDbContext();   
         
-
         // GET: Books
         public ActionResult Index()
         {
             
             var list = dbContext.Books
                 .Select(x => new BookListItem
-                {
+                {                    
                     Id = x.Id,
                     Book = x,
                     Author = x.Author,
                     
                 }).ToList();
            
-
+            
             return View(list);
             
         }
@@ -37,7 +34,15 @@ namespace BooksStorage.Controllers
         // GET: Books/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            BookHits b = dbContext.Books.Select(x => new BookHits { book = x, Hits = x.Hits }).First(x => x.book.Id == id);
+            if (b.Hits.Count == 0)
+                dbContext.Books.First(x => x.Id == id).Hits.Add(new Hit { Date = DateTime.UtcNow.Date, Count = 1 });
+            else dbContext.Books.First(x => x.Id == id).Hits.FirstOrDefault(x => x.Date == DateTime.UtcNow.Date).Count++;
+
+            
+            dbContext.SaveChanges();
+            return View(b);
+            
         }
 
         // GET: Books/Create

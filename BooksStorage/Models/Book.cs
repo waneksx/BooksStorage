@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Google.DataTable.Net.Wrapper;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -20,5 +21,38 @@ namespace BooksStorage.Models
 
        
         public Author Author { get; set; }
+
+        public IList<Hit> Hits { get; set; }
+
+        public Book()
+        {
+            Hits = new List<Hit>();
+        }
+
+        public string GoogleChartData
+        {
+            get
+            {
+
+                //let's instantiate the DataTable.
+                var dt = new Google.DataTable.Net.Wrapper.DataTable();
+                dt.AddColumn(new Column(ColumnType.Date, "Day", "Day"));
+                dt.AddColumn(new Column(ColumnType.Number, "Count", "Views"));
+
+                foreach (Hit hit in Hits)
+                {
+                    Row r = dt.NewRow();
+                    r.AddCellRange(new Cell[]
+                    {
+                        new Cell(hit.Date),
+                        new Cell(hit.Count)
+                    });
+                    dt.AddRow(r);
+                }
+
+                //Let's create a Json string as expected by the Google Charts API.
+                return dt.GetJson();
+            }
+        }
     }
 }
