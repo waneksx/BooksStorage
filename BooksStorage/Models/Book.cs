@@ -38,9 +38,10 @@ namespace BooksStorage.Models
                 var dt = new Google.DataTable.Net.Wrapper.DataTable();
                 dt.AddColumn(new Column(ColumnType.Date, "Day", "Day"));
                 dt.AddColumn(new Column(ColumnType.Number, "Count", "Views"));
-
+                Hits = Hits.OrderBy(x => x.Date).ToList();                
                 foreach (Hit hit in Hits)
                 {
+                    
                     Row r = dt.NewRow();
                     r.AddCellRange(new Cell[]
                     {

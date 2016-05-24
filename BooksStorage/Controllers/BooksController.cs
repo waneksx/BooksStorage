@@ -35,8 +35,14 @@ namespace BooksStorage.Controllers
         public ActionResult Details(int id)
         {
             BookHits b = dbContext.Books.Select(x => new BookHits { book = x, Hits = x.Hits }).First(x => x.book.Id == id);
-            if (b.Hits.Count == 0)
-                dbContext.Books.First(x => x.Id == id).Hits.Add(new Hit { Date = DateTime.UtcNow.Date, Count = 1 });
+            bool todayHit =false;
+            foreach (var item in b.Hits)
+            {
+                if (item.Date == DateTime.UtcNow.Date)
+                    todayHit = true;
+            }
+            if (b.Hits.Count == 0 || b.Hits == null || !todayHit)
+                dbContext.Books.First(x => x.Id == id).Hits.Add(new Hit { Date = DateTime.UtcNow.Date, Count = 1 });            
             else dbContext.Books.First(x => x.Id == id).Hits.FirstOrDefault(x => x.Date == DateTime.UtcNow.Date).Count++;
 
             
