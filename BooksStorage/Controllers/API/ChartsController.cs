@@ -1,4 +1,5 @@
 ﻿using BooksStorage.BookData;
+using BooksStorage.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,13 +15,22 @@ namespace BooksStorage.Controllers.API
         [HttpGet]
         public HttpResponseMessage Hits(int id)
         {
-            var book = dbContext.Books.First(x => x.Id == id);
-            if (book == null)
+            BookHits b = dbContext.Books.Select(x => new BookHits { book = x, Hits = x.Hits }).First(x => x.book.Id == id);
+            bool todayHit = false;
+            foreach (var item in b.Hits)
+            {
+                if (item.Date == DateTime.UtcNow.Date)
+                    todayHit = true;
+            }
+            if (b.Hits.Count == 0  || !todayHit)
+                dbContext.Books.First(x => x.Id == id).Hits.Add(new Hit { Date = DateTime.UtcNow.Date, Count = 1 });
+            else dbContext.Books.First(x => x.Id == id).Hits.FirstOrDefault(x => x.Date == DateTime.UtcNow.Date).Count++;
+            if (b == null)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Book is missed");
             }
-            book.Hits = 
-            var data = book.GoogleChartData;
+            
+            var data = b.book.GoogleChartData;
             return Request.CreateResponse(HttpStatusCode.OK, data);
         }
     }
