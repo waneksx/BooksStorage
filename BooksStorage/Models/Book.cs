@@ -19,7 +19,10 @@ namespace BooksStorage.Models
         [MaxLength(100, ErrorMessage = "Big title")]
         public string Title { get; set; }
 
-       
+        [RegularExpression(@"(ISBN[-]*(1[03])*[ ]*(: ){0,1})*(([0-9Xx][- ]*){13}|([0-9Xx][- ]*){10})", ErrorMessage = "Invalid ISBN ")]
+        public string ISBN { get; set; }
+
+
         public Author Author { get; set; }
 
         public IList<Hit> Hits { get; set; }

@@ -10,7 +10,7 @@ namespace BooksStorage.Utils
     {
 
         
-        public static void Add(this BookData.BookDbContext books, string title, string authorFirstName, string authorLastName)
+        public static void Add(this BookData.BookDbContext books, string title, string authorFirstName, string authorLastName, string isbn)
         {
             Author author = new Author { FirstName = authorFirstName, LastName = authorLastName };
             bool authentic = true;            
@@ -26,7 +26,7 @@ namespace BooksStorage.Utils
             {
                 books.Authors.Add(author);
             }            
-            books.Books.Add(new Book { Title = title, Author = author });
+            books.Books.Add(new Book { Title = title, Author = author, ISBN = isbn });
             books.SaveChanges();
         }
 

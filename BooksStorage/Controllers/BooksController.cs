@@ -63,7 +63,7 @@ namespace BooksStorage.Controllers
         {
             try
             {
-                dbContext.Add(bli.Book.Title, bli.Author.FirstName, bli.Author.LastName);
+                dbContext.Add(bli.Book.Title, bli.Author.FirstName, bli.Author.LastName, bli.Book.ISBN);
                 dbContext.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -101,6 +101,7 @@ namespace BooksStorage.Controllers
                     Author = x.Author,
 
                 }).First(x => x.Id == id);
+                b.Book.ISBN = bli.Book.ISBN;
                 b.Book.Title = bli.Book.Title;
                 b.Author.FirstName = bli.Author.FirstName;
                 b.Author.LastName = bli.Author.LastName;
@@ -125,7 +126,11 @@ namespace BooksStorage.Controllers
         {
             try
             {
-                dbContext.Books.Remove(dbContext.Books.First(x => x.Id == id));
+
+                var deletableBook = dbContext.Books.First(x => x.Id == id);
+                
+                dbContext.Entry(deletableBook).Collection(x => x.Hits).Load();
+                dbContext.Books.Remove(deletableBook);
                 dbContext.SaveChanges();
 
 
